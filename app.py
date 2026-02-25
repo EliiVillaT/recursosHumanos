@@ -66,37 +66,85 @@ else:
     st.sidebar.success("✅ Todos los datos son válidos")
 
 # =============================================================================
-# FILTROS DE ANÁLISIS
+# 🔍 FILTROS DE ANÁLISIS (UNIFICADOS - ANTES DE GRÁFICOS)
 # =============================================================================
-st.sidebar.header("🔍 Filtros de Análisis")
+st.sidebar.header("🔍 Filtros de Búsqueda")
 
-departamentos = st.sidebar.multiselect(
-    "Departamento",
-    options=df["Department"].unique(),
-    default=df["Department"].unique()
+# --- Filtro por Departamento ---
+departamentos_disponibles = df["Department"].unique().tolist()
+departamentos_seleccionados = st.sidebar.multiselect(
+    label="🏢 Seleccionar Departamento(s)",
+    options=departamentos_disponibles,
+    default=departamentos_disponibles,
+    help="Ctrl+Clic para seleccionar múltiples"
 )
 
-generos = st.sidebar.multiselect(
-    "Género",
-    options=df["Gender"].unique(),
-    default=df["Gender"].unique()
+# --- Filtro por Género ---
+generos_disponibles = df["Gender"].unique().tolist()
+generos_seleccionados = st.sidebar.multiselect(
+    label="👥 Seleccionar Género",
+    options=generos_disponibles,
+    default=generos_disponibles
 )
 
-min_salario, max_salario = int(df["Salary"].min()), int(df["Salary"].max())
-rango_salario = st.sidebar.slider("Rango de Salario ($)", min_salario, max_salario, (min_salario, max_salario))
+# --- Filtro por Rango de Salario ---
+salario_minimo = int(df["Salary"].min())
+salario_maximo = int(df["Salary"].max())
+st.sidebar.subheader("💰 Rango de Salario")
+rango_salario = st.sidebar.slider(
+    label="Selecciona el rango ($)",
+    min_value=salario_minimo,
+    max_value=salario_maximo,
+    value=(salario_minimo, salario_maximo),
+    step=1000,
+    format="$%d"
+)
 
-min_anios, max_anios = int(df["YearsAtCompany"].min()), int(df["YearsAtCompany"].max())
-rango_anios = st.sidebar.slider("Años en la Empresa", min_anios, max_anios, (min_anios, max_anios))
+# --- Filtro por Años en la Empresa ---
+anios_minimo = int(df["YearsAtCompany"].min())
+anios_maximo = int(df["YearsAtCompany"].max())
+st.sidebar.subheader("📅 Años en la Empresa")
+rango_anios = st.sidebar.slider(
+    label="Selecciona el rango de años",
+    min_value=anios_minimo,
+    max_value=anios_maximo,
+    value=(anios_minimo, anios_maximo),
+    step=1
+)
 
-# Aplicar filtros
+# --- Resumen de Filtros ---
+st.sidebar.markdown("---")
+st.sidebar.info(f"""
+    **Filtros activos:**
+    - 🏢 Departamentos: {len(departamentos_seleccionados)} seleccionados
+    - 👥 Géneros: {len(generos_seleccionados)} seleccionados  
+    - 💰 Salario: ${rango_salario[0]:,.0f} - ${rango_salario[1]:,.0f}
+    - 📅 Años: {rango_anios[0]} - {rango_anios[1]}
+""")
+
+# --- Botón Restablecer ---
+if st.sidebar.button("🔄 Restablecer Filtros"):
+    st.session_state.clear()
+    st.rerun()
+
+# =============================================================================
+# 🔄 APLICAR TODOS LOS FILTROS AL DATAFRAME
+# =============================================================================
 df_filtrado = df[
-    (df["Department"].isin(departamentos)) &
-    (df["Gender"].isin(generos)) &
+    (df["Department"].isin(departamentos_seleccionados)) &
+    (df["Gender"].isin(generos_seleccionados)) &
     (df["Salary"] >= rango_salario[0]) &
     (df["Salary"] <= rango_salario[1]) &
     (df["YearsAtCompany"] >= rango_anios[0]) &
     (df["YearsAtCompany"] <= rango_anios[1])
 ]
+
+# Validar si hay datos
+if df_filtrado.empty:
+    st.warning("⚠️ No hay empleados que coincidan con los filtros.")
+    st.stop()
+
+st.sidebar.success(f"✅ {len(df_filtrado)} empleados encontrados")
 
 # =============================================================================
 # 🎯 KPIs PRINCIPALES
@@ -416,22 +464,6 @@ if st.sidebar.button("🔄 Restablecer Filtros"):
     st.session_state.clear()
     st.rerun()
 
-# =============================================================================
-# 🔄 APLICAR FILTROS A LOS DATOS
-# =============================================================================
-df_filtrado = df[
-    (df["Department"].isin(departamentos_seleccionados)) &
-    (df["Salary"] >= rango_salario[0]) &
-    (df["Salary"] <= rango_salario[1])
-]
-
-# Validar si hay datos después de filtrar
-if df_filtrado.empty:
-    st.warning("⚠️ No hay empleados que coincidan con los filtros seleccionados.")
-    st.stop()
-
-st.sidebar.success(f"✅ {len(df_filtrado)} empleados encontrados")
-# =============================================================================
 # PIE DE PÁGINA
 # =============================================================================
 st.markdown("---")
