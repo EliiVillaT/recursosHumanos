@@ -424,46 +424,6 @@ resumen_dept["Salario Máx"] = resumen_dept["Salario Máx"].apply(lambda x: f"${
 
 st.dataframe(resumen_dept, use_container_width=True)
 # =============================================================================
-# 🔍 FILTROS EN SIDEBAR
-# =============================================================================
-st.sidebar.header("🔍 Filtros de Búsqueda")
-
-# --- Filtro por Departamento ---
-departamentos_disponibles = df["Department"].unique().tolist()
-departamentos_seleccionados = st.sidebar.multiselect(
-    label="🏢 Seleccionar Departamento(s)",
-    options=departamentos_disponibles,
-    default=departamentos_disponibles,
-    help="Ctrl+Clic para seleccionar múltiples departamentos"
-)
-
-# --- Filtro por Rango de Salario ---
-salario_minimo = int(df["Salary"].min())
-salario_maximo = int(df["Salary"].max())
-
-st.sidebar.subheader("💰 Rango de Salario")
-rango_salario = st.sidebar.slider(
-    label="Selecciona el rango de salario ($)",
-    min_value=salario_minimo,
-    max_value=salario_maximo,
-    value=(salario_minimo, salario_maximo),
-    step=1000,
-    format="$%d"
-)
-
-# --- Resumen de Filtros ---
-st.sidebar.markdown("---")
-st.sidebar.info(f"""
-    **Filtros aplicados:**
-    - 🏢 Departamentos: {', '.join(departamentos_seleccionados) if departamentos_seleccionados else 'Todos'}
-    - 💰 Salario: ${rango_salario[0]:,.0f} - ${rango_salario[1]:,.0f}
-""")
-
-# --- Botón Limpiar Filtros ---
-if st.sidebar.button("🔄 Restablecer Filtros"):
-    st.session_state.clear()
-    st.rerun()
-
 # PIE DE PÁGINA
 # =============================================================================
 st.markdown("---")
