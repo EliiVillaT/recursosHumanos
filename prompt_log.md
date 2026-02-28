@@ -20,18 +20,13 @@ prompt 5: usar la barra lateral (st.sidebar) para agregar filtros que me permita
 
 respuesta IA: [Codigo]
 ajustes: la respuesta del código no actualizaba los graficos por lo que se solicito a la ia la actualización de los mismos, estos realizan el ajuste en la parte inicial quedando la estructura del código de esta forma:
-# 1. Configuración 
-# 2. Carga de datos 
-# 3. Limpieza de datos 
-
-# 4. 🔍 FILTROS UNIFICADOS (ANTES de cualquier gráfico/KPI) 
-#    - Definir widgets en sidebar
-#    - Aplicar filtros → df_filtrado
-#    - Validar df_filtrado.empty
-
-# 5. 🎯 KPIs (usan df_filtrado) 
-# 6. 📊 Gráficos (usan df_filtrado) 
-# 7. 📋 Tabla (usa df_filtrado) 
-# 8. 💾 Exportar (usa df_filtrado) 
-# 9. 🏢 Resumen (usa df_filtrado) 
-# 10. Pie de página 
+1. Configuración
+2. Carga de datos
+3. Limpieza de datos
+4. filtros unificados
+5. KPIs
+6. Graficos
+7. Tabla
+8. Exporta
+9. Resumen
+10. Pie de pagina
